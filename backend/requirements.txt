@@ -1,0 +1,39 @@
+# FinAccess AI — Backend requirements
+# Core API
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+pydantic==2.7.1
+
+# ML stack
+numpy
+scikit-learn
+xgboost
+shap
+fairlearn
+
+# Deep learning (LSTM risk model + FINNs)
+tensorflow==2.16.1       # or torch==2.3.0 if you prefer PyTorch
+# torch==2.3.0
+# torchvision==0.18.0
+
+# RL agent
+
+# Database
+sqlalchemy==2.0.30
+asyncpg==0.29.0          # PostgreSQL async driver
+motor==3.4.0             # MongoDB async driver
+
+# Caching
+redis==5.0.4
+
+# Data processing
+pandas==2.2.2
+pyarrow==16.0.0
+
+# Observability
+python-dotenv==1.0.1
+loguru==0.7.2
+
+# Testing
+pytest==8.2.0
+httpx==0.27.0            # async test client for FastAPI

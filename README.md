@@ -3,7 +3,6 @@
 > **AI-powered financial inclusion for India's informal economy — voice-first, multilingual, explainable.**
 
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react)](https://react.dev)
-[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 [![Languages](https://img.shields.io/badge/Languages-7_Indian-orange?style=flat-square)](#language-support)
 [![Voice](https://img.shields.io/badge/Voice-Web_Speech_API-blue?style=flat-square)](#voice--accessibility)
 

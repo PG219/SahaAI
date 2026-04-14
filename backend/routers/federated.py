@@ -1,10 +1,7 @@
 # routers/federated.py — Federated learning weight aggregation (FedAvg)
 import numpy as np
-from fastapi import APIRouter, HTTPException
-try:
-    from ..schemas import FederatedUpdateRequest, FederatedUpdateResponse
-except ImportError:
-    from schemas import FederatedUpdateRequest, FederatedUpdateResponse
+from fastapi import APIRouter
+from backend.schemas import FederatedUpdateRequest, FederatedUpdateResponse
 
 router = APIRouter()
 
@@ -22,18 +19,9 @@ def federated_update(req: FederatedUpdateRequest):
     No raw training data ever leaves the originating bank — only weight deltas
     are transmitted, preserving customer privacy.
     """
-    if req.num_samples <= 0:
-        raise HTTPException(status_code=400, detail="num_samples must be greater than zero")
-    if not req.model_weights:
-        raise HTTPException(status_code=400, detail="model_weights must not be empty")
-
     rnd = req.round_number
     if rnd not in _rounds:
         _rounds[rnd] = []
-
-    expected_len = len(_rounds[rnd][0]["weights"]) if _rounds[rnd] else len(req.model_weights)
-    if len(req.model_weights) != expected_len:
-        raise HTTPException(status_code=400, detail="model_weights length does not match current round")
 
     _rounds[rnd].append({
         "bank_id":   req.bank_id,

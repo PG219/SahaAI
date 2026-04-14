@@ -1,11 +1,7 @@
 # routers/rl.py — RL agent endpoint
 from fastapi import APIRouter
-try:
-    from ..schemas import RLStateRequest, RLStateResponse
-    from ..ml.models import RLAgent
-except ImportError:
-    from schemas import RLStateRequest, RLStateResponse
-    from ml.models import RLAgent
+from backend.schemas import RLStateRequest, RLStateResponse
+from ml.models import RLAgent
 
 router = APIRouter()
 agent  = RLAgent()

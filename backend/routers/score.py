@@ -1,12 +1,8 @@
 # routers/score.py — Credit scoring endpoint
 import numpy as np
 from fastapi import APIRouter, HTTPException
-try:
-    from ..schemas import ScoreRequest, ScoreResponse, ShapFeature
-    from ..ml.models import CreditModel, FINNValidator, FairnessChecker
-except ImportError:
-    from schemas import ScoreRequest, ScoreResponse, ShapFeature
-    from ml.models import CreditModel, FINNValidator, FairnessChecker
+from backend.schemas import ScoreRequest, ScoreResponse, ShapFeature
+from ml.models import CreditModel, FINNValidator, FairnessChecker
 
 router = APIRouter()
 model     = CreditModel()
@@ -40,9 +36,6 @@ def _engineer_features(p) -> np.ndarray:
 @router.post("/score", response_model=ScoreResponse)
 def score_user(req: ScoreRequest):
     p = req.profile
-
-    if not p.repayment_history:
-        raise HTTPException(status_code=400, detail="repayment_history must contain at least one month")
 
     # 1. FINN hard-constraint pre-check
     finn_violations = finn.validate(p)

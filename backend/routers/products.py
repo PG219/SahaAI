@@ -1,9 +1,6 @@
 # routers/products.py — Product recommendation engine
 from fastapi import APIRouter
-try:
-    from ..schemas import ProductRequest, ProductResponse, ProductMatch
-except ImportError:
-    from schemas import ProductRequest, ProductResponse, ProductMatch
+from backend.schemas import ProductRequest, ProductResponse, ProductMatch
 
 router = APIRouter()
 

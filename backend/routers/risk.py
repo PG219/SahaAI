@@ -1,12 +1,8 @@
 # routers/risk.py — Financial risk forecasting (LSTM)
 import numpy as np
 from fastapi import APIRouter
-try:
-    from ..schemas import RiskRequest, RiskResponse, RiskForecast
-    from ..ml.models import RiskModel
-except ImportError:
-    from schemas import RiskRequest, RiskResponse, RiskForecast
-    from ml.models import RiskModel
+from backend.schemas import RiskRequest, RiskResponse, RiskForecast
+from ml.models import RiskModel
 
 router = APIRouter()
 model  = RiskModel()
@@ -20,7 +16,7 @@ def _top_drivers(history: list) -> list[str]:
     expenses  = [m.get("expense", 0) for m in history]
     payments  = [m.get("payment_made", 1) for m in history]
 
-    if len(incomes) >= 3:
+    if len(incomes) >= 2:
         recent_drop = (incomes[-3] - incomes[-1]) / max(incomes[-3], 1)
         if recent_drop > 0.15:
             drivers.append("Significant recent income drop")
@@ -43,19 +39,16 @@ def _top_drivers(history: list) -> list[str]:
 
 @router.post("/predict-risk", response_model=RiskResponse)
 def predict_risk(req: RiskRequest):
-    if not req.history_months:
-        sequence = np.empty((0, 3), dtype=np.float32)
-    else:
-        # Prepare time-series input for LSTM
-        sequence = np.array([[
-            m.get("income", 0),
-            m.get("expense", 0),
-            m.get("payment_made", 1),
-        ] for m in req.history_months], dtype=np.float32)
+    # Prepare time-series input for LSTM
+    sequence = np.array([[
+        m.get("income", 0),
+        m.get("expense", 0),
+        m.get("payment_made", 1),
+    ] for m in req.history_months], dtype=np.float32)
 
-        # Normalise
-        sequence[:, 0] /= 100000   # income normalised to 1 lakh
-        sequence[:, 1] /= 100000
+    # Normalise
+    sequence[:, 0] /= 100000   # income normalised to 1 lakh
+    sequence[:, 1] /= 100000
 
     current_risk, forecast_probs = model.predict(sequence, horizon=req.horizon)
 

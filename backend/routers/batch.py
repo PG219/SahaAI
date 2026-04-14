@@ -1,15 +1,13 @@
 # routers/batch.py — Batch scoring for bank officers
 import numpy as np
 from fastapi import APIRouter
-try:
-    from ..schemas import BatchRequest, BatchResponse, BatchResultRow
-    from ..ml.models import CreditModel
-except ImportError:
-    from schemas import BatchRequest, BatchResponse, BatchResultRow
-    from ml.models import CreditModel
+from backend.schemas import BatchRequest, BatchResponse, BatchResultRow
+from ml.models import CreditModel, FINNValidator, FairnessChecker
 
 router   = APIRouter()
 model    = CreditModel()
+finn     = FINNValidator()
+fairness = FairnessChecker()
 
 PRODUCT_MAP = {"gig":"PM SVANidhi","agricultural":"PM SVANidhi","self_employed":"MUDRA Yojana","salaried":"Jan Samarth","business":"MUDRA Yojana"}
 
@@ -18,8 +16,6 @@ def batch_score(req: BatchRequest):
     results, approved, flagged, group_stats = [], 0, 0, {}
     for row in req.rows:
         repay_list = [int(x) for x in row.repayment_history.split(",") if x.strip()]
-        if not repay_list:
-            repay_list = [0]
         repay_rate = sum(repay_list) / max(len(repay_list), 1)
         expense_ratio = row.monthly_expenses / max(row.monthly_income, 1)
         savings_months = row.savings_balance / max(row.monthly_income, 1)
